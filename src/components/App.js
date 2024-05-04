@@ -1,19 +1,23 @@
-import React, { useState } from "react";
-import ShoppingList from "./ShoppingList";
-import Header from "./Header";
+
+import React, { useState,useEffect } from "react";
+import AdminNavBar from "./AdminNavBar";
+import QuestionForm from "./QuestionForm"
+import QuestionList from  "./QuestionList"
 
 function App() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  function handleDarkModeClick() {
-    setIsDarkMode((isDarkMode) => !isDarkMode);
-  }
+  const [page, setPage] = useState("List");
+  const [questions,setQuestions] = useState([])
+  useEffect(()=>{
+    fetch("http://localhost:4000/questions")
+    .then(res=>res.json())
+    .then(data=>setQuestions(data))
+  },[])
 
   return (
-    <div className={"App " + (isDarkMode ? "dark" : "light")}>
-      <Header isDarkMode={isDarkMode} onDarkModeClick={handleDarkModeClick} />
-      <ShoppingList />
-    </div>
+    <main>
+      <AdminNavBar onChangePage={setPage} />
+      {page === "Form" ? <QuestionForm setQuestions={setQuestions} /> : <QuestionList setQuestions={setQuestions} questions={questions}/>}
+    </main>
   );
 }
 
